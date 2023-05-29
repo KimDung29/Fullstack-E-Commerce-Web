@@ -38,6 +38,7 @@ export const login = async (req:Request, res: Response, next:NextFunction) => {
 
         const { password, ...info} = user.toObject();
         res.cookie('accessToken', token, { httpOnly: true}).status(200).send(info)
+        
     } catch (error) {
         next(error)
     }
