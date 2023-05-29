@@ -1,0 +1,128 @@
+
+.form_validate {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  // height: 100vh;
+  background-color: rgba(0, 0, 255, 0.364);
+  font-size: 10px;
+
+
+  form {
+    display: flex;
+    flex-direction: column;
+    width: 50vw;
+    // height: 91vh;
+    background-color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+
+    h2 {
+      color: rgba(128, 0, 128, 0.834);
+      text-align: center;
+      margin: 0;
+      font-size: 22px;
+    }
+
+    .inputContainer {
+      display: flex;
+      flex-direction: column;
+      position: relative;
+
+      .errorMessage {
+        font-size: 14px;
+      }
+    }
+    label {
+      font-size: 16px;
+      font-weight: 500;
+      margin: 0;
+    }
+
+    input,
+    select {
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      border: none;
+      outline: none;
+      background-color: rgba(0, 0, 255, 0.684);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 5px;
+      width: 80px;
+      margin: auto;
+      cursor: pointer;
+      font-size: 15px;
+    }
+    span {
+      font-size: 10px;
+      color: red;
+      padding: 5px;
+      word-break: normal;
+      visibility: hidden;
+    }
+    input:focus {
+      outline-color: rgba(128, 0, 128, 0.57);
+    }
+    
+    button:active,
+    button:focus {
+      outline-color: none;
+      border: none;
+    }
+
+    input:invalid[focused="true"] ~ span,
+    select:invalid[focused="true"] ~ span {
+      visibility: visible;
+    }
+    input:invalid[focused="true"],
+    select:invalid[focused="true"] {
+      border: 1px solid red;
+    }
+    
+        
+    .test {
+      flex: 1;
+    }
+    .avatar input {
+      border: none;
+      padding-left: 0;
+    }
+    .showHideBtn:focus {
+      outline: none;
+    }
+
+    .showHideBtn {
+      border: none;
+      outline: none;
+      background-color: rgba(0, 0, 255, 0.684);
+      color: white;
+      cursor: pointer;
+      width: 60px;
+      height: 39%;
+      position: absolute;
+      right: 0;
+      top: -6px;
+      bottom: 0;
+    }
+    .checkbox {
+      display: flex;
+      flex-direction: row;
+      input {
+        margin-right: 5px;
+      }
+    }
+    @media screen and (max-width: 780px) {
+      form {
+        width: 80vw;
+        // height: 90vh;
+      }
+    }
+  }
+}
+
