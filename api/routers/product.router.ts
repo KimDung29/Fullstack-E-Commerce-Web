@@ -9,8 +9,8 @@ const router = express.Router();
 // });
 
 router.get("/single/:id", getProduct);
-router.get("/", getProducts);
-router.post("/", verifyToken, postProduct);
+router.get("/",  getProducts);
+router.post("", verifyToken, postProduct);
 router.put("/:id", verifyToken, putProduct);
 router.delete("/:id", verifyToken, deleteProduct);
 

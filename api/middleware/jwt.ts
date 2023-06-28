@@ -6,7 +6,7 @@ import createError from "../utils/createError";
 
 export interface CustomRequest extends Request {
   userId?: string;
-  isSeller?: string;
+  isSeller?: boolean;
 }
 
 export const verifyToken =(req:CustomRequest, res: Response, next: NextFunction) => {
@@ -18,7 +18,7 @@ export const verifyToken =(req:CustomRequest, res: Response, next: NextFunction)
   jwt.verify(token, process.env.JSON_KEY as string, (err:VerifyErrors | null, payload:any) => {
    if(err) next(createError(403, 'Token is not valid!'))
     req.userId = payload.id;
-    req.isSeller = payload.isSeller;
+    req.isSeller = payload.isSeller === true;
     
     next()
   });

@@ -1,42 +1,42 @@
 import { useState } from "react";
-import "./form.scss";
 
 interface FileInputProps {
   label: string;
   name: string;
-  value: File | null;
+  pattern: string;
+  required: boolean;
   errorMessage?: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
-const FileInput = ({
-  name,
+export default function FileInput({
   label,
-  value,
+  name,
+  pattern,
+  required,
+
   errorMessage,
   onChange,
-  ...props
-}: any) => {
-  const [focused, setFocused] = useState(false);
-
-  const handleFocused = () => {
-    setFocused(true);
+}: FileInputProps) {
+  const [focus, setFocus] = useState<boolean>(false);
+  const handleBlur = () => {
+    setFocus(true);
   };
   return (
     <>
-      <div className="inputContainer test avatar">
+      <div className="inputContainer fileInput">
         <label>{label}</label>
         <input
-          {...props}
           type="file"
           name={name}
+          pattern={pattern}
+          required={required}
           onChange={onChange}
-          onBlur={handleFocused}
-          focused={focused.toString()}
-          onFocus={() => (name === "confirmPassword" ? setFocused(true) : "")}
+          onBlur={handleBlur}
+          data-focus={focus.toString()}
+          className="input"
         />
-        <span className="errorMessage">{errorMessage}</span>
+        <span className="error-message">{errorMessage}</span>
       </div>
     </>
   );
-};
-export default FileInput;
+}

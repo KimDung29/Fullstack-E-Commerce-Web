@@ -10,10 +10,11 @@ const ProductSchema = new Schema(
     title: {
       type: String,
       required: true,
+      unique: true,
     },
     desc: {
       type: String,
-      required: true,
+      required: false,
     },
     totalStars: {
       type: Number,
@@ -25,23 +26,27 @@ const ProductSchema = new Schema(
     },
     categories: {
       type: [String],
-      required: true,
+      required: false,
     },
     brand: {
         type: String,
-        required: true
+        required: false
     },
-    gender: {
+    ingredients: {
+      type: String,
+      required: false,
+    },
+    howToUse: {
         type: String,
-        required: true
+        required: false
     },
     price: {
       type: Number,
-      required: true,
+      required: false,
     },
     coverImg: {
       type: String,
-      required: true,
+      required: false,
     },
     images: {
       type: [String],

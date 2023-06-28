@@ -1,42 +1,55 @@
 import { useState } from "react";
-import "./form.scss";
 
-const SelectForm = ({
+export interface OptionType {
+  value: string;
+  label: string;
+}
+export interface SelectFormType {
+  label: string;
+  name: string;
+  onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  placeholder: string;
+  options: OptionType[] | undefined;
+  required: boolean;
+  errorMessage: string;
+}
+
+export default function SelectForm({
   label,
   name,
   onChange,
-  errormessage,
   placeholder,
   options,
-  ...inputProps
-}: any) => {
-  const [selected, setSelected] = useState(false);
-
-  const handleFocused = () => {
-    setSelected(true);
+  required,
+  errorMessage,
+}: SelectFormType) {
+  const [focus, setFocus] = useState<boolean>(false);
+  const handleBlur = () => {
+    setFocus(true);
   };
   return (
     <>
       <div className="inputContainer">
         <label>{label}</label>
         <select
-          {...inputProps}
           name={name}
           onChange={onChange}
-          onBlur={handleFocused}
-          focused={selected.toString()}
+          onBlur={handleBlur}
+          required={required}
+          data-focus={focus.toString()}
+          className="input"
         >
-          <option value="">{placeholder}</option>
-          {options?.map((option: any) => (
-            <option key={option.value} value={option.value}>
+          <option className="option" value="">
+            {placeholder}
+          </option>
+          {options?.map((option: OptionType) => (
+            <option className="option" key={option.value} value={option.value}>
               {option.label}
             </option>
           ))}
         </select>
-        <span className="errorMessage">{errormessage}</span>
+        <span className="error-message">{errorMessage}</span>
       </div>
     </>
   );
-};
-
-export default SelectForm;
+}

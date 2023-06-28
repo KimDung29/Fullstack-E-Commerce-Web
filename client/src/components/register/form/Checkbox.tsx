@@ -1,35 +1,37 @@
 import { useState } from "react";
 
-const Checkbox = ({
+interface CheckboxType {
+  label: string;
+  type: string;
+  name: string;
+  errorMessage: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
+export default function Checkbox({
   label,
   type,
   onChange,
   name,
   errorMessage,
-  ...props
-}: any) => {
-  const [focused, setFocused] = useState(false);
+}: CheckboxType) {
+  const [focus, setFocus] = useState(false);
 
   const handleFocused = () => {
-    setFocused(true);
+    setFocus(true);
   };
   return (
     <>
-      <div className="inputContainer checkbox">
+      <div className=" checkboxLabel">
         <input
-          {...props}
           type={type}
           name={name}
           onChange={onChange}
           onBlur={handleFocused}
-          focused={focused.toString()}
-          onFocus={() => (name === "confirmPassword" ? setFocused(true) : "")}
+          data-focus={focus.toString()}
         />
-        <label>{label}</label>
-        <span className="errorMessage">{errorMessage}</span>
+        <label className="">{label}</label>
       </div>
     </>
   );
-};
-
-export default Checkbox;
+}

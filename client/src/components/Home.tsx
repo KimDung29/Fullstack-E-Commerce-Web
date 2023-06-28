@@ -4,7 +4,7 @@ export default function Home() {
   return (
     <>
       <Nav />
-      <div>
+      <div style={{ margin: "120px 0" }}>
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Neque ad
         blanditiis, ex sint natus, amet inventore iure quis nostrum sunt enim,
         quae corrupti. Nihil deleniti architecto numquam neque earum tenetur

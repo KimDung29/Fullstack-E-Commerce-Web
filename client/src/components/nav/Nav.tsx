@@ -1,25 +1,36 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import newRequest from "../../utils/newRequest";
+import newRequest from "../../utils/axiosInstance";
 import "./nav.scss";
 import noUser from "../../assets/noUser.png";
+import { useState } from "react";
+import Search from "../../util/Search";
+import React from "react";
 
 export default function Nav() {
-  const user = localStorage.getItem("currentUser");
-  // const currentUser = user !== null ? JSON.parse(user) : "";
-  let currentUser;
-
-  if (user && user.trim() !== "") {
-    try {
-      currentUser = JSON.parse(user);
-    } catch (error) {
-      console.error("Error parsing currentUser from localStorage:", error);
-      currentUser = null;
-    }
-  } else {
-    currentUser = null;
-  }
-
   const navigate = useNavigate();
+  const [isDisplay, setIsDisplay] = useState(false);
+  const searchRef = React.useRef<HTMLDivElement>(null);
+
+  const user = localStorage.getItem("currentUser");
+  const currentUser = user && user.trim() !== "" ? JSON.parse(user) : null; // neu muon lay array thi thay null = [] tai day
+
+  // Search
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        searchRef.current &&
+        !searchRef.current.contains(event.target as Node)
+      ) {
+        setIsDisplay(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -31,64 +42,134 @@ export default function Nav() {
     }
   };
 
+  const handleAddToCart = () => {
+    navigate("/cart");
+  };
+  const handleOpenSearch = () => {
+    setIsDisplay(true);
+  };
+  const handleCloseSearch = () => {
+    setIsDisplay(false);
+  };
+  const discount = 15;
+  const orderOver = 50;
+  const code = "15OFF";
+
   return (
     <>
-      <div className="nav">
-        <NavLink to="/" className="nav-link">
-          Home
-        </NavLink>
-        {currentUser ? null : (
-          <NavLink to="/register" className="nav-link">
-            Register
+      <div className="navbar">
+        <p className="banner">
+          Save {discount}% on orders over ${orderOver} ♡ Use code {code} at
+          checkout
+        </p>
+        <div className="nav">
+          <i onClick={handleOpenSearch} className="fas fa-search"></i>
+          <NavLink to="/" className="fas">
+            SENSE
           </NavLink>
-        )}
-        {currentUser ? null : (
-          <NavLink to="/login" className="nav-link">
-            Login
-          </NavLink>
-        )}
 
-        {currentUser ? (
-          !currentUser?.isSeller ? (
-            <div className="login_done">
-              <NavLink to="/products" className="nav-link">
-                Products
+          <div className={`${!currentUser ? "register_login" : "d-none"}`}>
+            {currentUser ? null : (
+              <NavLink to="/register" className={` fas navLink`}>
+                Register
               </NavLink>
-              <p className="username">{currentUser?.username}</p>
+            )}
+            {currentUser ? null : (
+              <NavLink to="/login" className="fas navLink">
+                Login
+              </NavLink>
+            )}
+          </div>
 
-              <div className="loginSuccess">
-                <div className="avatarImg">
-                  <img src={currentUser?.avatar || noUser} alt="" />
-                </div>
-                <div className="order_logout">
-                  <div>Order </div>
-                  <div onClick={handleLogout}>Logout </div>
+          {currentUser ? (
+            !currentUser?.isSeller ? (
+              <div className="login_done">
+                <i onClick={handleAddToCart} className="fas fa-shopping-cart">
+                  <sup>0</sup>
+                </i>
+
+                {/* <p className="username">{currentUser?.username}</p> */}
+
+                <div className="loginSuccess">
+                  <div className="avatarImg">
+                    <img src={currentUser?.avatar || noUser} alt="" />
+                    <div className="order_logout" onClick={handleLogout}>
+                      <span> Log out</span>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          ) : (
-            <div className="login_done">
-              <NavLink to="/products" className="nav-link">
-                Products
-              </NavLink>
-              <NavLink to="/add-product" className="nav-link">
-                Add Products
-              </NavLink>
-              <p className="username">{currentUser?.username}</p>
+            ) : (
+              <div className="login_done">
+                <NavLink to="/seller_products" className="nav-link">
+                  Products
+                </NavLink>
+                <NavLink to="/add-product" className="nav-link">
+                  Add Products
+                </NavLink>
+                <p className="username">{currentUser?.username}</p>
 
-              <div className="loginSuccess">
-                <div className="avatarImg">
-                  <img src={currentUser?.avatar || noUser} alt="" />
-                </div>
-                <div className="order_logout">
-                  <div>Order </div>
-                  <div onClick={handleLogout}>Logout </div>
+                <div className="loginSuccess">
+                  <div className="avatarImg">
+                    <img src={currentUser?.avatar || noUser} alt="" />
+                    <div className="order_logout" onClick={handleLogout}>
+                      <span> Log out</span>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          )
-        ) : null}
+            )
+          ) : null}
+        </div>
+        {/* SEARCH */}
+        <Search
+          isDisplay={isDisplay}
+          searchRef={searchRef}
+          onClose={handleCloseSearch}
+        />
+
+        {/* LIST ITEM */}
+
+        <div className="listItem">
+          {normalScreen.map((item) => (
+            <NavLink
+              to={`/${item.path}`}
+              key={item.label}
+              className={`navList`}
+            >
+              {item.label}
+            </NavLink>
+          ))}
+        </div>
       </div>
     </>
   );
 }
+
+const normalScreen = [
+  { path: "skin-care", label: "Skin Care" },
+  { path: "hair-care", label: "Hair Care" },
+  { path: "body-care", label: "Body Care" },
+  { path: "nail", label: "Nail" },
+  { path: "polish", label: "Polish" },
+  { path: "blog", label: "Blog" },
+  { path: "about-us", label: "About Us" },
+];
+const userScreen = [
+  { path: "skin-care", label: "Skin Care" },
+  { path: "hair-care", label: "Hair Care" },
+  { path: "body-care", label: "Body Care" },
+  { path: "nail", label: "Nail" },
+  { path: "polish", label: "Polish" },
+  { path: "blog", label: "Blog" },
+  { path: "about-us", label: "About Us" },
+];
+const sellerScreen = [
+  { path: "skin-care", label: "Skin Care" },
+  { path: "hair-care", label: "Hair Care" },
+  { path: "body-care", label: "Body Care" },
+  { path: "nail", label: "Nail" },
+  { path: "polish", label: "Polish" },
+  { path: "blog", label: "Blog" },
+  { path: "about-us", label: "About Us" },
+];

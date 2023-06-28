@@ -1,0 +1,53 @@
+.addProduct{
+    margin: 50px;
+
+    .formAddProduct {        
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: start;
+
+        .inputFile  {
+            label {
+                display: block;
+                margin-top: 15px;
+            }
+            
+            input {
+                padding: 3px 0;
+                width: 100%;
+                &:focus {
+                    outline: none;
+                }
+            }
+            textarea {
+                    &:focus {
+                    outline: none;
+                }
+            }
+            
+        }
+        .leftForm {
+            flex: 1;
+            padding: 10px 20px;
+        }
+        .rightForm {
+            flex: 1;
+            padding: 10px 20px;          
+        }
+    }
+    .submit {
+        background-color: blue;
+        color: white;
+        margin: 0 auto ;
+        padding: 8px ;
+        width: 50%;
+        margin-top: 40px;
+        border-radius: 5px;
+        cursor: pointer;
+        border: none;
+        outline: none;
+        display: flex;
+        justify-content: center;;
+    }
+}

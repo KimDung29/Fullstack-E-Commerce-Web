@@ -17,15 +17,29 @@ export const getProduct = async (req:CustomRequest, res:Response, next: NextFunc
 
 
 export const getProducts = async (req: CustomRequest, res: Response, next: NextFunction) => {
+  
   try {
-    const products = await Product.find();
-    res.status(200).send(products);
-  } catch (error: any) {
-    next(error);
-  }
-};
-
-
+    if (req.body.isSeller) {
+      const products = await Product.find();
+      
+      const productArray = products.filter(p => p.userId === req.body.userId)
+      if (!productArray) return next(createError(404, 'Not found!'))
+      res.status(200).send(productArray)
+      
+      
+    }
+    if (!req.body.isSeller) {
+      const products = await Product.find();
+      res.status(200).send(products);
+    } 
+    
+  } catch (error) {
+    const products = await Product.find().catch(error => {
+      console.log(error);
+      next(error);
+    })
+  };
+}
 
 export const postProduct = async (req:CustomRequest, res:Response, next: NextFunction) => {
 
@@ -36,8 +50,12 @@ export const postProduct = async (req:CustomRequest, res:Response, next: NextFun
     ...req.body
   })
   try {    
-     const saveProduct = await newProduct.save();
-     
+      const productExists = await Product.exists({ title: req.body.title });
+      if (productExists) {
+        return next(createError(400, 'Product already exists!'));
+      }
+    
+      const saveProduct = await newProduct.save(); 
       res.status(200).json(saveProduct)
     } catch (error:any) {
       next(error)
@@ -51,9 +69,9 @@ export const putProduct = async (req:CustomRequest, res:Response, next: NextFunc
   try {
     const product = await Product.findByIdAndUpdate(req.params.id);
 
-    if(!product) return next(createError(404, 'Not found!'))
+    if (!product) return next(createError(404, 'Not found!'))
 
-    product.userId = req.body.id
+    product.userId = req.body.userId
     product.title = req.body.title
     product.desc = req.body.desc
     product.totalStars = req.body.totalStars
@@ -74,6 +92,7 @@ export const putProduct = async (req:CustomRequest, res:Response, next: NextFunc
     next(error)
   }
 }
+
 export const deleteProduct = async (req:CustomRequest, res:Response, next: NextFunction) => {
   if(!req.isSeller) return next(createError(403, 'Only seller can delete product'))
 
@@ -88,4 +107,5 @@ export const deleteProduct = async (req:CustomRequest, res:Response, next: NextF
     next(error)
   }
 }
+
 

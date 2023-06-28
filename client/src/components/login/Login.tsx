@@ -3,13 +3,14 @@ import { useState } from "react";
 import "./login.scss";
 import * as Yup from "yup";
 import Nav from "../nav/Nav";
-import newRequest from "../../utils/newRequest";
 import { useNavigate } from "react-router-dom";
+import newRequest from "../../utils/axiosInstance";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [backendError, setBackendError] = useState("");
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const formik = useFormik({
     initialValues: {
@@ -27,30 +28,34 @@ const Login = () => {
     }),
     onSubmit: async (values) => {
       try {
+        setLoading(true);
         const res = await newRequest.post("/auth/login", {
           username: values.username,
           password: values.password,
         });
 
         localStorage.setItem("currentUser", JSON.stringify(res.data));
-        navigate("/");
+
+        if (res.status === 200) {
+          navigate("/");
+        }
       } catch (error: any) {
         // formik can not catch the error from backend
         setBackendError(error.response.data);
       }
     },
   });
+
   const { values, errors, touched, handleSubmit, handleChange, handleBlur } =
     formik;
 
   const handleShowPassword = (e: any) => {
     e.preventDefault();
-    setShowPassword(!showPassword);
+    setShowPassword((pre) => !pre);
   };
 
   return (
     <>
-      <Nav />
       <div className="loginContainer">
         <form onSubmit={handleSubmit} className="login-Form">
           <div className=" input-Form ">
@@ -58,7 +63,7 @@ const Login = () => {
             <input
               type="text"
               name="username"
-              placeholder="username"
+              placeholder="Username"
               onChange={handleChange}
               onBlur={handleBlur}
               value={values.username}
@@ -75,13 +80,7 @@ const Login = () => {
 
           <div className="input-Form">
             <label>Password</label>
-            <div
-              className={` inputValidation ${
-                touched.password && errors.password
-                  ? " border-red"
-                  : "border-gray"
-              }`}
-            >
+            <div className={` inputValidation`}>
               <input
                 type={showPassword ? "text" : "password"}
                 name="password"
@@ -89,24 +88,28 @@ const Login = () => {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.password}
-                className="input-Field showp"
+                className={`input-Field ${
+                  touched.password && errors.password
+                    ? " border-red"
+                    : "border-gray"
+                }`}
               />
-              <button className="showBtn" onClick={handleShowPassword}>
+              <div className="showHide" onClick={handleShowPassword}>
                 {showPassword ? "Hide" : "Show"}
-              </button>
+              </div>
+
+              {touched.password && errors.password ? (
+                <div className="errors">{errors.password}</div>
+              ) : null}
+
+              {backendError !== "" ? (
+                <div className="errors">{backendError}</div>
+              ) : null}
             </div>
-
-            {touched.password && errors.password ? (
-              <div className="errors">{errors.password}</div>
-            ) : null}
-
-            {backendError !== "" ? (
-              <div className="errors">{backendError}</div>
-            ) : null}
           </div>
 
           <button type="submit" className="loginBtn">
-            Login
+            {backendError !== "" ? "Login" : loading ? "Loading" : "Login"}
           </button>
         </form>
       </div>
